@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今日心情測驗</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Noto Sans TC",Arial,sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#ffe4ec,#e5ddff,#dff6ff);
+  color:#333;
+}
+.app{
+  width:min(92%,520px);
+  background:rgba(255,255,255,.9);
+  border-radius:28px;
+  padding:32px 26px;
+  box-shadow:0 15px 40px rgba(80,60,100,.18);
+  text-align:center;
+}
+h1{margin:5px 0 8px;font-size:32px;color:#6c5ce7}
+.subtitle{color:#777;margin-bottom:25px}
+.question{font-size:20px;font-weight:bold;margin:20px 0}
+.moods{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.mood{
+  border:2px solid transparent;
+  background:#f7f7fb;
+  border-radius:18px;
+  padding:15px 8px;
+  cursor:pointer;
+  font-size:18px;
+  transition:.2s;
+}
+.mood:hover{transform:translateY(-3px);background:#eeeaff}
+.mood.selected{border-color:#8c7ae6;background:#e9e5ff}
+button{
+  border:0;
+  border-radius:16px;
+  padding:14px 24px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:22px;
+  background:#7667d9;
+  color:white;
+  transition:.2s;
+}
+button:hover{transform:scale(1.03);background:#6254c8}
+#result{display:none;animation:fade .5s ease}
+.result-emoji{font-size:65px;margin:10px}
+.result-title{font-size:25px;font-weight:bold;color:#6c5ce7}
+.result-text{font-size:18px;line-height:1.8;color:#555}
+@keyframes fade{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.small{font-size:13px;color:#999;margin-top:20px}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <section id="home">
+    <div style="font-size:50px">🌈</div>
+    <h1>今日心情測驗</h1>
+    <div class="subtitle">花一分鐘，看看今天的自己。</div>
+
+    <div class="question">今天的你是什麼心情？</div>
+
+    <div class="moods">
+      <div class="mood" data-mood="開心">😆<br>開心</div>
+      <div class="mood" data-mood="普通">🙂<br>普通</div>
+      <div class="mood" data-mood="難過">😢<br>難過</div>
+      <div class="mood" data-mood="生氣">😤<br>生氣</div>
+      <div class="mood" data-mood="疲累">😴<br>疲累</div>
+      <div class="mood" data-mood="期待">✨<br>期待</div>
+    </div>
+
+    <button id="testBtn">測測今天的自己</button>
+    <div class="small">每一天的心情，都值得被好好看見。</div>
+  </section>
+
+  <section id="result">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <p class="result-text" id="resultText"></p>
+    <button id="againBtn">重新測一次</button>
+  </section>
+</div>
+
+<script>
+let selectedMood = "";
+
+const results = {
+  "開心":{
+    emoji:"😆",
+    title:"今天的你充滿能量！",
+    text:"把這份好心情分享給身邊的人吧。今天很適合做一些讓自己開心的事情！"
+  },
+  "普通":{
+    emoji:"🙂",
+    title:"平凡也是很好的一天。",
+    text:"不一定每天都要很精彩，安安穩穩地過好今天，也是一種幸福。"
+  },
+  "難過":{
+    emoji:"😢",
+    title:"今天的你，需要一點溫柔。",
+    text:"不用勉強自己馬上變開心。給自己一點時間，慢慢來，你已經做得很好了。"
+  },
+  "生氣":{
+    emoji:"😤",
+    title:"先深呼吸一下吧！",
+    text:"情緒沒有對錯。先讓自己冷靜下來，再決定接下來要怎麼做。"
+  },
+  "疲累":{
+    emoji:"😴",
+    title:"今天辛苦了！",
+    text:"如果累了，就休息一下吧。休息不是偷懶，而是為了讓自己重新充滿力量。"
+  },
+  "期待":{
+    emoji:"✨",
+    title:"今天的你正在期待一些美好的事！",
+    text:"帶著期待往前走吧，也許今天就會遇到一個讓你開心的小驚喜。"
+  }
+};
+
+document.querySelectorAll(".mood").forEach(item=>{
+  item.addEventListener("click",()=>{
+    document.querySelectorAll(".mood").forEach(m=>m.classList.remove("selected"));
+    item.classList.add("selected");
+    selectedMood = item.dataset.mood;
+  });
+});
+
+document.getElementById("testBtn").addEventListener("click",()=>{
+  if(!selectedMood){
+    alert("請先選擇今天的心情喔！");
+    return;
+  }
+
+  const result = results[selectedMood];
+  document.getElementById("resultEmoji").textContent = result.emoji;
+  document.getElementById("resultTitle").textContent = result.title;
+  document.getElementById("resultText").textContent = result.text;
+
+  document.getElementById("home").style.display="none";
+  document.getElementById("result").style.display="block";
+});
+
+document.getElementById("againBtn").addEventListener("click",()=>{
+  selectedMood="";
+  document.querySelectorAll(".mood").forEach(m=>m.classList.remove("selected"));
+  document.getElementById("result").style.display="none";
+  document.getElementById("home").style.display="block";
+});
+</script>
+</body>
+</html>
